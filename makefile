@@ -47,3 +47,10 @@ install:
 docs:
 	@mkdir -p doc
 	@doxygen HYPERNEAT_doxyfile 
+
+git:
+	make clean
+	make cleandocs
+	git add --all
+	git commit -m "$(commit)"
+	git push
