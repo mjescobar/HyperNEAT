@@ -2,17 +2,9 @@
 
 Installations Instructions:
 
-NEAT library is needed to install the HyperNEAT library:
+NEAT library is needed to install the HyperNEAT library. For access to NEAT library please visit https://github.com/mjescobar/NEAT/tree/NEATSpikes
 
-```
-$ cd ..
-$ git clone https://github.com/mjescobar/NEAT.git
-$ cd NEAT
-$ make
-$ sudo make install
-```
-
-Now is posible install HyperNEAT library:
+After install NEAT library is posible install HyperNEAT library:
 
 ```
 $ cd ../HyperNEAT
