@@ -7,7 +7,6 @@ NEAT library is needed to install the HyperNEAT library. For access to NEAT libr
 After install NEAT library is posible install HyperNEAT library:
 
 ```
-$ cd ../HyperNEAT
 $ make
 $ sudo make install
 ```
