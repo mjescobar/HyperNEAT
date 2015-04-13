@@ -1,7 +1,7 @@
 #ifndef HYPERNEAT_H
 #define HYPERNEAT_H
 
-#include <NEAT>
+#include <NEATSPIKES>
 #include "Substrate.hpp"
 #include "CPPNInputs.hpp"
 #include <vector>
@@ -10,8 +10,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <ctime>
 
 using namespace std;
+using namespace NEATSpikes;
 /**
  * \namespace ANN_USM
  * \brief Dedicated to artificial intelligence development in Santa María University.
@@ -33,10 +35,15 @@ namespace ANN_USM{
 
 		char * test_name;
 
-	public:
-
 		Substrate * substrate;/**< hyperNeat substrate */
-		Population * cppn_neat;/**< hyperNeat Cppn-Neat */
+
+		GlobalInformation * ilo;
+		BasicSynapticWeight * BSW;
+		BasicNeuron * BN;
+		Life NeatPopulation;
+		vector < Organism * > OrganismGeneration;
+
+	public:
 
 		/**
 		 * \brief Constructor with parameters
@@ -44,7 +51,7 @@ namespace ANN_USM{
 		 * \param outputs Output vector
 		 * \param hyperneat_info_file Json file
 		 */
-		HyperNeat(vector < double * > inputs, vector < double * > outputs, char * path1, char * path2, char * path3);
+		HyperNeat(vector < double * > inputs, vector < double * > outputs, char * path1, char * path2);
 		/**
 		 * \brief Destructor
 		 */
@@ -83,6 +90,11 @@ namespace ANN_USM{
 		 */
 		void GetHyperNeatOutputFunctions(string plataform);
 
+		void CreateOrganismPopulation();
+
+		int getPopulationSize();
+
+		int getGenerationSize();
 
 	};
 }

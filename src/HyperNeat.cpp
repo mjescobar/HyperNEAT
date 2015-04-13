@@ -4,8 +4,10 @@
 #include "HyperNeat.hpp"
 using namespace ANN_USM;
 
-HyperNeat::HyperNeat(vector < double * > inputs, vector < double * > outputs, char * path1, char * path2, char * path3)
+HyperNeat::HyperNeat(vector < double * > inputs, vector < double * > outputs, char * path1, char * path2)
 {
+	srand(time(0));
+
 	// ============================= READING JSON FILE ============================= //
 	ifstream file;
 	file.open(path1);
@@ -14,10 +16,10 @@ HyperNeat::HyperNeat(vector < double * > inputs, vector < double * > outputs, ch
 
 	substrate = new Substrate(inputs,outputs);
 
-	char neatname[] = "NEAT";
-	char ruta[] = "./NEAT_organisms/";
-
-	cppn_neat = new Population(path2, path3, neatname, ruta);
+	ilo = new GlobalInformation();
+	BSW = new BasicSynapticWeight("./BSWUserDef", ilo);
+	BN = new BasicNeuron("./BNUserDef");
+	NeatPopulation = Life("./LifeUserDef", "./NicheUserDef",BN,BSW,path2,ilo );
 	
 	HJsonDeserialize(hyperneat_info);
 
@@ -26,7 +28,9 @@ HyperNeat::HyperNeat(vector < double * > inputs, vector < double * > outputs, ch
 HyperNeat::~HyperNeat()
 {
 	free(substrate);
-	free(cppn_neat);
+	free(ilo);
+	free(BSW);	
+	free(BN);
 	vector<CPPNInputs>().swap(AditionalCPPNInputs);
 }
 
@@ -91,11 +95,11 @@ bool HyperNeat::CreateSubstrateConnections(int organism_id)
 		return false;
 	}
 
-	if((int)cppn_neat->champion.getNEATOutputSize() > 1 )
+	if(getOrganismOutputSize() > 1 )
 	{
 		if(substrate->GetLayersNumber() > 2)
 		{
-			if((int)cppn_neat->champion.getNEATOutputSize() != substrate->GetLayersNumber()-1)
+			if(getOrganismOutputSize() != substrate->GetLayersNumber()-1)
 			{
 				cout << "ERROR: The layout number does not correspond to the cppn output number" << endl;
 				return false;
@@ -118,8 +122,8 @@ bool HyperNeat::CreateSubstrateConnections(int organism_id)
 						for(int c = 0; c < (int)AditionalCPPNInputs.size(); c++)
 							cppn_inputs.push_back(AditionalCPPNInputs.at(c).Eval(cppn_inputs));
 
-						if(organism_id == -1) cppn_output = cppn_neat->champion.eval(cppn_inputs);
-						else cppn_output = cppn_neat->organisms.at(organism_id).eval(cppn_inputs);
+						if(organism_id == -1) cppn_output = NeatPopulation.getChampion().eval(cppn_inputs);
+						else cppn_output = OrganismGeneration.at(organism_id)->eval(cppn_inputs);
 
 						if(abs(cppn_output.at(i)) > connection_threshold)
 							(substrate->GetSpatialNode(i+1,k))->AddInputToNode(substrate->GetSpatialNode(i,j), cppn_output.at(i));
@@ -155,8 +159,8 @@ bool HyperNeat::CreateSubstrateConnections(int organism_id)
 					for(int c = 0; c < (int)AditionalCPPNInputs.size(); c++)
 						cppn_inputs.push_back(AditionalCPPNInputs.at(c).Eval(cppn_inputs));
 
-					if(organism_id == -1) weight = (cppn_neat->champion.eval(cppn_inputs)).at(0);
-					else weight = (cppn_neat->organisms.at(organism_id).eval(cppn_inputs)).at(0);
+					if(organism_id == -1) weight = (NeatPopulation.getChampion().eval(cppn_inputs)).at(0);
+					else weight = (OrganismGeneration.at(organism_id)->eval(cppn_inputs)).at(0);
 
 					if(abs(weight) > connection_threshold)
 						(substrate->GetSpatialNode(i+1,k))->AddInputToNode(substrate->GetSpatialNode(i,j), weight);
@@ -183,7 +187,7 @@ bool HyperNeat::CreateSubstrateConnections(char * path)
 {
 	OkConnections = false;
 
-	Genetic_Encoding organism;
+	Organism organism;
 	organism.load(path);
 
 	if(substrate->GetLayersNumber() == 0)
@@ -192,11 +196,11 @@ bool HyperNeat::CreateSubstrateConnections(char * path)
 		return false;
 	}
 
-	if((int)cppn_neat->champion.getNEATOutputSize() > 1 )
+	if(getOrganismOutputSize() > 1 )
 	{
 		if(substrate->GetLayersNumber() > 2)
 		{
-			if((int)cppn_neat->champion.getNEATOutputSize() != substrate->GetLayersNumber()-1)
+			if(getOrganismOutputSize() != substrate->GetLayersNumber()-1)
 			{
 				cout << "ERROR: The layout number does not correspond to the cppn output number" << endl;
 				return false;
@@ -299,25 +303,25 @@ bool HyperNeat::EvaluateSubstrateConnections()
 
 bool HyperNeat::HyperNeatFitness(double fitness, int organism_id)
 {
-	bool result = (cppn_neat->fitness_champion < fitness) ? true: false;
+	bool result = (NeatPopulation.getChampion().getFitness() < fitness) ? true: false;
 
 	if(result) {
 
 		clog << endl << "\tNEW CHAMPION FITNESS\t-->\t" << fitness << endl;
 
-		cppn_neat->fitness_champion = fitness;
-		cppn_neat->champion = cppn_neat->organisms.at(organism_id);
+		//cppn_neat->fitness_champion = fitness;
+		//cppn_neat->champion = cppn_neat->organisms.at(organism_id);
 	}
 
-	cppn_neat->organisms.at(organism_id).fitness = fitness;
+	OrganismGeneration.at(organism_id)->setFitness(fitness);
 
 	return result;
 }
 
 void HyperNeat::HyperNeatEvolve()
 {
-	cppn_neat->print_to_file_currrent_generation();
-	cppn_neat->epoch();
+	//NeatPopulation.print_to_file_currrent_generation();
+	NeatPopulation.epoch();
 }
 
 void HyperNeat::GetHyperNeatOutputFunctions(string plataform)
@@ -388,8 +392,22 @@ void HyperNeat::GetHyperNeatOutputFunctions(string plataform)
 			
 	  	}else 
 	  		cerr << "Unable to open file: HYPERNEAT_FUNCTIONS" << endl;
-	}
-	
+	}	
+}
+
+void HyperNeat::CreateOrganismPopulation()
+{
+	OrganismGeneration = NeatPopulation.getAllNewOrganisms();
+}
+
+int HyperNeat::getPopulationSize()
+{
+	return OrganismGeneration.size();
+}
+
+int HyperNeat::getGenerationSize()
+{
+	return NeatPopulation.getGenerations();
 }
 
 #endif

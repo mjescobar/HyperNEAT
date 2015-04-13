@@ -34,15 +34,16 @@ cleandocs:
 	@rm -f -R ./doc
 
 install:
-	g++ -shared -Wl,-soname,libhyperneat.so.1 -o libhyperneat.so.1.0 $(OBJS) $(LDFLAGS)
-	ln -sf libhyperneat.so.1.0 libhyperneat.so
-	ln -sf libhyperneat.so.1.0 libhyperneat.so.1
-	mv libhyperneat.so.1.0 libhyperneat.so libhyperneat.so.1 /usr/lib
-	mkdir -p /usr/include/HYPERNEAT_headers/
-	cp ./headers/* /usr/include/HYPERNEAT_headers/
-	cp HYPERNEAT /usr/include
-	chmod go+r /usr/include/HYPERNEAT_headers/*
-	chmod go+r /usr/include/HYPERNEAT
+	@g++ -shared -Wl,-soname,libhyperneat.so.1 -o libhyperneat.so.1.0 $(OBJS) $(LDFLAGS)
+	@ln -sf libhyperneat.so.1.0 libhyperneat.so
+	@ln -sf libhyperneat.so.1.0 libhyperneat.so.1
+	@mv libhyperneat.so.1.0 libhyperneat.so libhyperneat.so.1 /usr/lib
+	@mkdir -p /usr/include/HYPERNEAT_headers/
+	@cp ./headers/* /usr/include/HYPERNEAT_headers/
+	@cp HYPERNEAT /usr/include
+	@chmod go+r /usr/include/HYPERNEAT_headers/*
+	@chmod go+r /usr/include/HYPERNEAT
+	@echo Installation was successful
 
 docs:
 	@mkdir -p doc
