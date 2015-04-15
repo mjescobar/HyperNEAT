@@ -67,7 +67,7 @@ namespace ANN_USM{
 		 * \return The return value is true if the creation of connections was successful and false if it was not
 		 */
 		bool CreateSubstrateConnections(int organism_id);
-		bool CreateSubstrateConnections(char * path);
+		bool CreateSubstrateConnections(string path);
 		/**
 		 * \brief Allows to obtain the final HyperNeat outputs
 		 * \return The return value is true if the evaluation of connections was successful and false if it was not

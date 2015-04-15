@@ -1,7 +1,7 @@
 EXECUTABLE = HyperNeat
 VPATH = ./src ./headers ./objects
 CC = g++ -O3
-CFLAGS = -g -Wall -fPIC -I./headers 
+CFLAGS = -std=c++11 -g -Wall -fPIC -I./headers 
 LDFLAGS = -lpthread -L. -lneat
 OBJS = ./objects/HyperNeat.o ./objects/Substrate.o ./objects/SpatialNode.o ./objects/CPPNInputs.o 
 
