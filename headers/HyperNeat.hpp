@@ -33,10 +33,13 @@ namespace ANN_USM{
 
 		char * test_name;
 
+
+		int cppnAmountOutput;
+
 	public:
 
 		Substrate * substrate;/**< hyperNeat substrate */
-		Population * cppn_neat;/**< hyperNeat Cppn-Neat */
+		//Population * cppn_neat;/**< hyperNeat Cppn-Neat */
 
 		/**
 		 * \brief Constructor with parameters
@@ -44,7 +47,7 @@ namespace ANN_USM{
 		 * \param outputs Output vector
 		 * \param hyperneat_info_file Json file
 		 */
-		HyperNeat(vector < double * > inputs, vector < double * > outputs, char * path1, char * path2, char * path3);
+		HyperNeat(vector < double * > inputs, vector < double * > outputs, char * path1, int amountOutputCppn);
 		/**
 		 * \brief Destructor
 		 */
@@ -59,7 +62,7 @@ namespace ANN_USM{
 		 * \param organism_id Number of population organism  in CPPN-NEAT that will create connections in the substrate
 		 * \return The return value is true if the creation of connections was successful and false if it was not
 		 */
-		bool CreateSubstrateConnections(int organism_id);
+		bool CreateSubstrateConnections(Genetic_Encoding * organism_id);
 		bool CreateSubstrateConnections(char * path);
 		/**
 		 * \brief Allows to obtain the final HyperNeat outputs

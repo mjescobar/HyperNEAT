@@ -4,7 +4,7 @@
 #include "HyperNeat.hpp"
 using namespace ANN_USM;
 
-HyperNeat::HyperNeat(vector < double * > inputs, vector < double * > outputs, char * path1, char * path2, char * path3)
+HyperNeat::HyperNeat(vector < double * > inputs, vector < double * > outputs, char * path1, int _cppnAmountOutput)
 {
 	// ============================= READING JSON FILE ============================= //
 	ifstream file;
@@ -14,19 +14,21 @@ HyperNeat::HyperNeat(vector < double * > inputs, vector < double * > outputs, ch
 
 	substrate = new Substrate(inputs,outputs);
 
-	char neatname[] = "NEAT";
+/*	char neatname[] = "NEAT";
 	char ruta[] = "./NEAT_organisms/";
 
-	cppn_neat = new Population(path2, path3, neatname, ruta);
+	
+	cppn_neat = new Population(path2, path3, neatname, ruta);*/
 	
 	HJsonDeserialize(hyperneat_info);
 
 	clog << "\t-> Deserialize ok!" << endl;
+	cppnAmountOutput = _cppnAmountOutput;
 }
 HyperNeat::~HyperNeat()
 {
 	free(substrate);
-	free(cppn_neat);
+	/*free(cppn_neat);*/
 	vector<CPPNInputs>().swap(AditionalCPPNInputs);
 }
 
@@ -81,7 +83,7 @@ void HyperNeat::HJsonDeserialize(string hyperneat_info)
 	}
 }
 
-bool HyperNeat::CreateSubstrateConnections(int organism_id)
+bool HyperNeat::CreateSubstrateConnections(Genetic_Encoding * organism_id)
 {
 	OkConnections = false;
 
@@ -91,11 +93,11 @@ bool HyperNeat::CreateSubstrateConnections(int organism_id)
 		return false;
 	}
 
-	if((int)cppn_neat->champion.getNEATOutputSize() > 1 )
+	if( cppnAmountOutput > 1 )
 	{
 		if(substrate->GetLayersNumber() > 2)
 		{
-			if((int)cppn_neat->champion.getNEATOutputSize() != substrate->GetLayersNumber()-1)
+			if(cppnAmountOutput != substrate->GetLayersNumber()-1)
 			{
 				cout << "ERROR: The layout number does not correspond to the cppn output number" << endl;
 				return false;
@@ -118,8 +120,8 @@ bool HyperNeat::CreateSubstrateConnections(int organism_id)
 						for(int c = 0; c < (int)AditionalCPPNInputs.size(); c++)
 							cppn_inputs.push_back(AditionalCPPNInputs.at(c).Eval(cppn_inputs));
 
-						if(organism_id == -1) cppn_output = cppn_neat->champion.eval(cppn_inputs);
-						else cppn_output = cppn_neat->organisms.at(organism_id).eval(cppn_inputs);
+						
+						cppn_output = organism_id->eval(cppn_inputs);
 
 						if(abs(cppn_output.at(i)) > connection_threshold)
 							(substrate->GetSpatialNode(i+1,k))->AddInputToNode(substrate->GetSpatialNode(i,j), cppn_output.at(i));
@@ -155,8 +157,8 @@ bool HyperNeat::CreateSubstrateConnections(int organism_id)
 					for(int c = 0; c < (int)AditionalCPPNInputs.size(); c++)
 						cppn_inputs.push_back(AditionalCPPNInputs.at(c).Eval(cppn_inputs));
 
-					if(organism_id == -1) weight = (cppn_neat->champion.eval(cppn_inputs)).at(0);
-					else weight = (cppn_neat->organisms.at(organism_id).eval(cppn_inputs)).at(0);
+					
+					weight = (organism_id->eval(cppn_inputs)).at(0);
 
 					if(abs(weight) > connection_threshold)
 						(substrate->GetSpatialNode(i+1,k))->AddInputToNode(substrate->GetSpatialNode(i,j), weight);
@@ -192,11 +194,11 @@ bool HyperNeat::CreateSubstrateConnections(char * path)
 		return false;
 	}
 
-	if((int)cppn_neat->champion.getNEATOutputSize() > 1 )
+	if(cppnAmountOutput> 1 )
 	{
 		if(substrate->GetLayersNumber() > 2)
 		{
-			if((int)cppn_neat->champion.getNEATOutputSize() != substrate->GetLayersNumber()-1)
+			if(cppnAmountOutput != substrate->GetLayersNumber()-1)
 			{
 				cout << "ERROR: The layout number does not correspond to the cppn output number" << endl;
 				return false;
@@ -296,8 +298,8 @@ bool HyperNeat::EvaluateSubstrateConnections()
 
 	return true;
 }
-
-bool HyperNeat::HyperNeatFitness(double fitness, int organism_id)
+/*
+bool HyperNeat::HyperNeatFitness(Population * cppn_neat, double fitness, int organism_id)
 {
 	bool result = (cppn_neat->fitness_champion < fitness) ? true: false;
 
@@ -313,14 +315,16 @@ bool HyperNeat::HyperNeatFitness(double fitness, int organism_id)
 
 	return result;
 }
-
-void HyperNeat::HyperNeatEvolve()
+*/
+/*
+void HyperNeat::HyperNeatEvolve(Population * cppn_neat)
 {
 	cppn_neat->print_to_file_currrent_generation();
 	cppn_neat->epoch();
 }
+*/
 
-void HyperNeat::GetHyperNeatOutputFunctions(string plataform)
+/*void HyperNeat::GetHyperNeatOutputFunctions(string plataform)
 {
 	CreateSubstrateConnections(-1);
 
@@ -390,6 +394,6 @@ void HyperNeat::GetHyperNeatOutputFunctions(string plataform)
 	  		cerr << "Unable to open file: HYPERNEAT_FUNCTIONS" << endl;
 	}
 	
-}
+}*/
 
 #endif
