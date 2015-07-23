@@ -24,7 +24,9 @@ HyperNeat::HyperNeat(vector < double * > inputs, vector < double * > outputs, ch
 	HJsonDeserialize(hyperneat_info);
 
 	clog << "\t-> Deserialize ok!" << endl;
+
 }
+
 HyperNeat::~HyperNeat()
 {
 	free(substrate);
@@ -95,11 +97,11 @@ bool HyperNeat::CreateSubstrateConnections(int organism_id)
 		return false;
 	}
 
-	if(getOrganismOutputSize() > 1 )
+	if( ANN::getOrganismOutputSize() > 1 )
 	{
 		if(substrate->GetLayersNumber() > 2)
 		{
-			if(getOrganismOutputSize() != substrate->GetLayersNumber()-1)
+			if(ANN::getOrganismOutputSize() != substrate->GetLayersNumber()-1)
 			{
 				cout << "ERROR: The layout number does not correspond to the cppn output number" << endl;
 				return false;
@@ -183,12 +185,12 @@ bool HyperNeat::CreateSubstrateConnections(int organism_id)
 	
 }
 
-bool HyperNeat::CreateSubstrateConnections(char * path)
+bool HyperNeat::CreateSubstrateConnections(string path)
 {
 	OkConnections = false;
 
 	Organism organism;
-	organism.load(path);
+	organism.load( path );
 
 	if(substrate->GetLayersNumber() == 0)
 	{
@@ -196,11 +198,11 @@ bool HyperNeat::CreateSubstrateConnections(char * path)
 		return false;
 	}
 
-	if(getOrganismOutputSize() > 1 )
+	if(ANN::getOrganismOutputSize() > 1 )
 	{
 		if(substrate->GetLayersNumber() > 2)
 		{
-			if(getOrganismOutputSize() != substrate->GetLayersNumber()-1)
+			if(ANN::getOrganismOutputSize() != substrate->GetLayersNumber()-1)
 			{
 				cout << "ERROR: The layout number does not correspond to the cppn output number" << endl;
 				return false;
