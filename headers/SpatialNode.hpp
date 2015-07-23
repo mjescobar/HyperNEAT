@@ -167,6 +167,8 @@ namespace ANN_USM{
 		 */
 		bool ActiveNode();
 
+		string getConnectionString();
+
 	};
 }
 #endif

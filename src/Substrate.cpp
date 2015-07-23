@@ -201,40 +201,58 @@ vector < int > Substrate::GetOutputOrder()
 }
 
 void Substrate::GetNodeFunction(string plataform)
+{
+	if(!strcmp(plataform.c_str(),(char *)"octave"))
 	{
-		if(!strcmp(plataform.c_str(),(char *)"octave"))
+		ofstream myfile ("functions_files/SIGMOID.m");
+
+		if (myfile.is_open())
 		{
-			ofstream myfile ("functions_files/SIGMOID.m");
+	    	myfile << OCTAVE_SIGMOID_STATEMENT << endl;
+		    myfile << OCTAVE_SIGMOID_CONST_LETTER << " = " << OCTAVE_SIGMOID_CONST << ";" << endl;
+		    myfile << OCTAVE_SIGMOID_FUNC << ";" << endl;
+		    myfile.close();
 
-			if (myfile.is_open())
-			{
-		    	myfile << OCTAVE_SIGMOID_STATEMENT << endl;
-			    myfile << OCTAVE_SIGMOID_CONST_LETTER << " = " << OCTAVE_SIGMOID_CONST << ";" << endl;
-			    myfile << OCTAVE_SIGMOID_FUNC << ";" << endl;
-			    myfile.close();
+	  	}else 
+	  		cerr << "Unable to open file: functions_files/SIGMOID.m" << endl;
 
-		  	}else 
-		  		cerr << "Unable to open file: functions_files/SIGMOID.m" << endl;
+		/*
+		ofstream myfile ("functions_files/USER_CUSTOM.m");
 
-			/*
-			ofstream myfile ("functions_files/USER_CUSTOM.m");
-
-			if (myfile.is_open())
-			{
-		    	myfile << OCTAVE_USER_CUSTOM_STATEMENT << endl;
-			    myfile << OCTAVE_USER_CUSTOM_CONST_LETTER << " = " << OCTAVE_USER_CUSTOM_CONST << ";" << endl;
-			    myfile << OCTAVE_USER_CUSTOM_FUNC << ";" << endl;
-			    myfile.close();
-
-		  	}else 
-		  		cerr << "Unable to open file: functions_files/USER_CUSTOM" << endl;		
-		  	*/
-		}
-		else if(!strcmp(plataform.c_str(),(char *)"c++"))
+		if (myfile.is_open())
 		{
-			
-		}
+	    	myfile << OCTAVE_USER_CUSTOM_STATEMENT << endl;
+		    myfile << OCTAVE_USER_CUSTOM_CONST_LETTER << " = " << OCTAVE_USER_CUSTOM_CONST << ";" << endl;
+		    myfile << OCTAVE_USER_CUSTOM_FUNC << ";" << endl;
+		    myfile.close();
+
+	  	}else 
+	  		cerr << "Unable to open file: functions_files/USER_CUSTOM" << endl;		
+	  	*/
+	}
+	else if(!strcmp(plataform.c_str(),(char *)"c++"))
+	{
 		
 	}
+	
+}
+
+string Substrate::getSubstrateConnectionString()
+{
+	stringstream connections;
+
+	for(int i = 0; i < (int)nodes.size(); i++)
+	{
+		connections << endl << "Layer " << i << ":" << endl;
+
+		for(int j = 0; i < (int)nodes.at(i).size(); j++)
+		{
+			connections << "Node " << i << ":" << endl;
+			connections << nodes.at(i).at(j)->getConnectionString() << endl;
+		}
+	}
+
+	return connections.str();
+}
 
 #endif

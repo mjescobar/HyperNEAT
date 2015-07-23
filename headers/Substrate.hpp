@@ -114,6 +114,8 @@ namespace ANN_USM
 		 * \param plataform Name of destination plataform for HyperNeat functions
 		 */
 		void GetNodeFunction(string plataform);
+
+		string getSubstrateConnectionString();
 	};	
 }
 #endif

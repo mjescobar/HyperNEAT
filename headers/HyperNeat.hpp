@@ -96,6 +96,8 @@ namespace ANN_USM{
 
 		int getGenerationSize();
 
+		void printConnectionFile();
+
 	};
 }
 #endif

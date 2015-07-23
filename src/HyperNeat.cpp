@@ -410,4 +410,18 @@ int HyperNeat::getGenerationSize()
 	return NeatPopulation.getGenerations();
 }
 
+void HyperNeat::printConnectionFile()
+{
+	ofstream myfile ("HyperNeat_Connections.txt");
+
+	if(myfile.is_open())
+	{
+		myfile << substrate->getSubstrateConnectionString() << endl;
+	}
+	else
+		cerr << "Unable to create the file: HyperNeat_Connections.txt" << endl;
+
+	myfile.close();
+}
+
 #endif

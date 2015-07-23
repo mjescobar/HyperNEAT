@@ -199,4 +199,21 @@ double SpatialNode::Sigmoid(double input)
 	return SIGMOID(input);
 }
 
+string SpatialNode::getConnectionString()
+{
+	stringstream connections;
+
+	if(!inputs_nodes.empty())
+	{
+		connections << "\tConnections:" << endl;
+
+		for(int i = 0; i < (int)inputs_nodes.size(); i++)
+			connections << "\t" << i << "\t->\tWeight:\t" << input_weight.at(i) << endl;
+	}
+	else
+		connections << "\tThis node has no connections" << endl;
+
+	return connections.str();
+}
+
 #endif
